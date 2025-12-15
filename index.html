@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My単語帳</title>
+		<!-- -------------------------------　▼テストのみ▼　------------------------------- -->
+		<meta name="robots" content="noindex">
+		<!-- -------------------------------　▲テストのみ▲　------------------------------- -->
+    <style>
+        body {
+            font-family: "Helvetica Neue", Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        h1 { margin-top: 20px; color: #333; }
+
+        /* コントロールパネル */
+        .controls {
+            margin: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+
+        .btn-main { background-color: #007bff; color: white; }
+        .btn-main:hover { background-color: #0056b3; }
+        
+        .btn-warn { background-color: #ff9800; color: white; }
+        .btn-warn:hover { background-color: #e68900; }
+
+        .btn-danger { background-color: #dc3545; color: white; }
+        .btn-danger:hover { background-color: #a71d2a; }
+
+        /* ステータス表示 */
+        #status { margin-bottom: 10px; font-weight: bold; color: #555; }
+
+        /* カードエリア（左右分割） */
+        .card-container {
+            display: flex;
+            width: 90%;
+            max-width: 800px;
+            /* height: 300px; */
+            background: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        /* 左側：問題（英語） */
+        .card-left {
+            flex: 1;
+            background-color: #e3f2fd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: #333;
+            border-right: 1px solid #ddd;
+            padding:2em  20px;
+        }
+
+        /* 右側：答え（日本語） */
+        .card-right {
+            flex: 1;
+            background-color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            color: #333;
+            cursor: pointer;
+            position: relative;
+            user-select: none; /* テキスト選択不可 */
+            transition: background 0.2s;
+						padding:2em  20px;
+
+        }
+
+        .card-right:hover {
+            background-color: #f9f9f9;
+        }
+
+        /* 答えを隠すためのマスク */
+        .card-right.hidden {
+            color: transparent;
+        }
+        .card-right.hidden::after {
+            content: "CLICK TO SHOW";
+            position: absolute;
+            color: #ccc;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        /* アクションボタンエリア */
+        .actions {
+            display: flex;
+            gap: 20px;
+        }
+
+        .actions button {
+            width: 150px;
+            padding: 15px;
+            font-size: 18px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1>英単語マスター</h1>
+
+    <div class="controls">
+        <button class="btn-main" onclick="loadAndShuffle()">全単語シャッフル</button>
+        <button class="btn-warn" onclick="startReviewMode()">苦手のみ復習 (<span id="missed-count">0</span>)</button>
+        <button class="btn-danger" onclick="clearMissed()">苦手をリセット</button>
+    </div>
+
+    <div id="status">データを読み込んでいます...</div>
+
+    <!-- 単語カード -->
+    <div class="card-container">
+        <div class="card-left" id="question-text">---</div>
+        <div class="card-right hidden" id="answer-text" onclick="revealAnswer()">---</div>
+    </div>
+
+    <!-- 判定ボタン -->
+    <div class="actions">
+        <button class="btn-danger" onclick="markAsMissed()">苦手に追加</button>
+        <button class="btn-main" onclick="nextCard()">次の単語 &rarr;</button>
+    </div>
+
+    <script>
+        let allWords = [];       // 全データ
+        let currentList = [];    // 現在プレイ中のリスト
+        let missedList = [];     // 苦手リスト
+        let currentIndex = 0;
+
+        // 起動時に実行
+        window.onload = async () => {
+            loadMissedFromStorage();
+            await loadJSON();
+        };
+
+        // 1. JSONデータの読み込み
+        async function loadJSON() {
+            try {
+                // tango.json を読み込む
+                const response = await fetch('./assets/js/tango.json');
+                const data = await response.json();
+                allWords = data.Vocabulary; // JSONの構造に合わせる
+                
+                // 最初は全単語をシャッフルして開始
+                loadAndShuffle();
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('status').innerText = "エラー: tango.jsonが見つかりません。サーバー経由で開いてください。";
+            }
+        }
+
+        // 2. LocalStorageから苦手リストを読み込む
+        function loadMissedFromStorage() {
+            const saved = localStorage.getItem('myTangoMissed');
+            if (saved) {
+                missedList = JSON.parse(saved);
+            }
+            updateMissedCount();
+        }
+
+        // 3. 全単語シャッフルモード開始
+        function loadAndShuffle() {
+            if (allWords.length === 0) return;
+            currentList = [...allWords]; // コピーを作成
+            shuffleArray(currentList);
+            currentIndex = 0;
+            document.getElementById('status').innerText = `全単語モード: ${currentList.length}語`;
+            renderCard();
+        }
+
+        // 4. 苦手復習モード開始
+        function startReviewMode() {
+            if (missedList.length === 0) {
+                alert("苦手な単語はまだありません！");
+                return;
+            }
+            currentList = [...missedList];
+            shuffleArray(currentList);
+            currentIndex = 0;
+            document.getElementById('status').innerText = `復習モード: ${currentList.length}語`;
+            renderCard();
+        }
+
+        // カードの描画
+        function renderCard() {
+            if (currentList.length === 0 || currentIndex >= currentList.length) {
+                document.getElementById('question-text').innerText = "終了！";
+                document.getElementById('answer-text').innerText = "お疲れ様でした";
+                document.getElementById('answer-text').classList.remove('hidden');
+                return;
+            }
+
+            const item = currentList[currentIndex];
+            document.getElementById('question-text').innerText = item.English;
+            document.getElementById('answer-text').innerText = item.Japanese;
+            
+            // 答えを隠す
+            document.getElementById('answer-text').classList.add('hidden');
+        }
+
+        // 答えを表示
+        function revealAnswer() {
+            document.getElementById('answer-text').classList.remove('hidden');
+        }
+
+        // 次のカードへ
+        function nextCard() {
+            if (currentIndex < currentList.length) {
+                currentIndex++;
+                renderCard();
+            }
+        }
+
+        // 苦手に登録
+        function markAsMissed() {
+            if (currentIndex >= currentList.length) return;
+
+            const currentItem = currentList[currentIndex];
+            
+            // 重複チェック（まだリストになければ追加）
+            const isExist = missedList.some(w => w.English === currentItem.English);
+            if (!isExist) {
+                missedList.push(currentItem);
+                localStorage.setItem('myTangoMissed', JSON.stringify(missedList));
+                updateMissedCount();
+                alert(`「${currentItem.English}」を苦手に登録しました。`);
+            } else {
+                alert("すでに登録済みです。");
+            }
+            // 自動で次へ進むなら nextCard() をここで呼ぶ
+        }
+
+        // 苦手リストのクリア
+        function clearMissed() {
+            if(confirm("苦手リストを全て消去しますか？")) {
+                missedList = [];
+                localStorage.removeItem('myTangoMissed');
+                updateMissedCount();
+                alert("リセットしました。");
+            }
+        }
+
+        function updateMissedCount() {
+            document.getElementById('missed-count').innerText = missedList.length;
+        }
+
+        // シャッフル用関数（Fisher-Yates）
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+    </script>
+</body>
+</html>
