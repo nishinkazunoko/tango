@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>単語検索</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <script src="assets/js/main.js" defer></script>
+    <style>/* styles.css - アプリケーションのスタイルを定義します */
+
+      /* 全体のレイアウト */
+      body {
+          font-family: Arial, sans-serif;
+          margin: 0;
+          padding: 0;
+          background-color: #f4f4f4;
+      }
+      
+      /* ヘッダー */
+      header {
+          background: #35424a;
+          color: #ffffff;
+          padding: 10px 0;
+          text-align: center;
+      }
+      
+      /* コンテナ */
+      .container {
+          width: 80%;
+          margin: auto;
+          overflow: hidden;
+      }
+      
+      /* ステータスメッセージ */
+      #status {
+          font-size: 1.2em;
+          margin: 20px 0;
+      }
+      
+      /* 単語リスト */
+      .word-list {
+          list-style: none;
+          padding: 0;
+      }
+      
+      .word-list li {
+          background: #ffffff;
+          margin: 5px 0;
+          padding: 10px;
+          border: 1px solid #ddd;
+          border-radius: 5px;
+      }
+      
+      /* 検索ボックス */
+      .search-box {
+          margin: 20px 0;
+      }
+      
+      .search-box input[type="text"] {
+          padding: 10px;
+          width: calc(100% - 22px);
+          border: 1px solid #ddd;
+          border-radius: 5px;
+      }
+      
+      /* ボタン */
+      button {
+          padding: 10px 15px;
+          background: #35424a;
+          color: #ffffff;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+      }
+      
+      button:hover {
+          background: #45a049;
+      }</style>
+</head>
+<body>
+    <header>
+        <h1>単語検索</h1>
+        <input type="text" id="searchEnglish" placeholder="英単語で検索">
+        <input type="text" id="searchJapanese" placeholder="日本語で検索">
+        <button id="searchButton">検索</button>
+    </header>
+    <main>
+        <div id="wordList"></div>
+    </main>
+    <footer>
+        <p>&copy; 2023 単語学習アプリ</p>
+    </footer>
+    <script>
+        let allWords = [];
+
+        window.onload = async () => {
+            await loadJSON();
+            document.getElementById('searchButton').addEventListener('click', filterWords);
+        };
+
+        async function loadJSON() {
+            try {
+                const response = await fetch('./assets/js/tango.json');
+                const data = await response.json();
+                allWords = data.Vocabulary;
+                displayWords(allWords);
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('wordList').innerText = "エラー: 単語データが読み込めません。";
+            }
+        }
+
+        function displayWords(words) {
+            const wordList = document.getElementById('wordList');
+            wordList.innerHTML = '';
+            words.forEach(word => {
+                const wordItem = document.createElement('div');
+                wordItem.innerText = `${word.English} - ${word.Japanese}`;
+                wordList.appendChild(wordItem);
+            });
+        }
+
+        function filterWords() {
+            const englishQuery = document.getElementById('searchEnglish').value.toLowerCase();
+            const japaneseQuery = document.getElementById('searchJapanese').value.toLowerCase();
+            const filteredWords = allWords.filter(word => 
+                word.English.toLowerCase().includes(englishQuery) &&
+                word.Japanese.toLowerCase().includes(japaneseQuery)
+            );
+            displayWords(filteredWords);
+        }
+    </script>
+</body>
+</html>
