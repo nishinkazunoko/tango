@@ -103,6 +103,12 @@
           grid-template-columns: 100%;
           padding: 0 15px;
         }
+        .search-box{
+          display: flex;
+          flex-direction: column;
+          gap:15px;
+          padding: 0 15px;
+        }
       }
       </style>
 </head>
@@ -116,9 +122,12 @@
         </ul>
     </nav>
         <h1>tango</h1>
-        <input type="text" id="searchEnglish" placeholder="英単語で検索">
-        <input type="text" id="searchJapanese" placeholder="日本語で検索">
+        <div class="search-box">
+          <input type="text" id="searchEnglish" placeholder="英単語で検索">
+          <input type="text" id="searchJapanese" placeholder="日本語で検索">
+        </div>
         <button id="searchButton">検索</button>
+
     </header>
     <main>
         <div id="wordList"></div>
