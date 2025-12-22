@@ -13,6 +13,7 @@
     <style>/* styles.css - アプリケーションのスタイルを定義します */
 
       /* 全体のレイアウト */
+      :root { --orange:  #f26831; }
       body {
           margin: 0;
           padding: 0;
@@ -26,7 +27,7 @@
       
       /* ヘッダー */
       header {
-          background: #f26831;
+          background: var(--orange);
           color: #ffffff;
           padding: 10px 0;
           text-align: center;
@@ -74,7 +75,7 @@
       /* ボタン */
       button {
           padding: 10px 15px;
-          background: #f26831;
+          background: var(--orange);
           color: #ffffff;
           border: 2px solid #fff;
           border-radius: 5px;
@@ -98,6 +99,12 @@
         grid-template-columns: 45% 45%;
         justify-content: center;
       }
+      .search-box{
+        display: flex;
+        gap: 10px;
+        padding: 0 15px;
+
+      }
       @media (max-width:800px) {
         #wordList{
           grid-template-columns: 100%;
@@ -107,7 +114,6 @@
           display: flex;
           flex-direction: column;
           gap:15px;
-          padding: 0 15px;
         }
       }
       </style>

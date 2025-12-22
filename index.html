@@ -11,14 +11,25 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap" rel="stylesheet">    
     <style>
+        :root { --orange:  #f26831; }
+
         body {
-            font-family: "Helvetica Neue", Arial, sans-serif;
+            font-family: "Noto Sans JP", sans-serif;
+            font-optical-sizing: auto;
+            font-weight: 400;
+            font-style: normal;
             background-color: #f4f4f9;
             margin: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
+        }
+        ul,li{
+            padding: 0;
+        }
+        li{
+            list-style: none;
         }
 
         h1 { margin-top: 20px; color: #333; }
@@ -32,6 +43,14 @@
             justify-content: center;
         }
 
+        header{
+            background-color: var(--orange);
+            width: 100%;
+            text-align: center;
+            a{
+                color: #fff;
+            }
+        }
         button {
             padding: 10px 20px;
             border: none;
@@ -118,7 +137,11 @@
             display: flex;
             gap: 20px;
         }
-
+        @media (max-width:800px) {
+            .actions {
+                flex-direction: column;
+            }
+        }
         .actions button {
             width: 150px;
             padding: 15px;
@@ -137,7 +160,7 @@
             </ul>
         </nav>
     </header>
-    <h1>英単語マスター</h1>
+    <h1>English words</h1>
 
     <div class="controls">
         <button class="btn-main" onclick="loadAndShuffle()">全単語シャッフル</button>
@@ -155,6 +178,7 @@
 
     <!-- 判定ボタン -->
     <div class="actions">
+        <button class="btn-main" onclick="prevCard()"> &larr;前の単語</button>
         <button class="btn-danger" onclick="markAsMissed()">苦手に追加</button>
         <button class="btn-main" onclick="nextCard()">次の単語 &rarr;</button>
     </div>
@@ -245,6 +269,14 @@
         function nextCard() {
             if (currentIndex < currentList.length) {
                 currentIndex++;
+                renderCard();
+            }
+        }
+
+        // 次のカードへ
+        function prevCard() {
+            if (currentIndex < currentList.length) {
+                currentIndex--;
                 renderCard();
             }
         }
