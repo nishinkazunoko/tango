@@ -166,6 +166,7 @@
         <button class="btn-main" onclick="loadAndShuffle()">全単語シャッフル</button>
         <button class="btn-warn" onclick="startReviewMode()">苦手のみ復習 (<span id="missed-count">0</span>)</button>
         <button class="btn-danger" onclick="clearMissed()">苦手をリセット</button>
+        <button class="btn-main" onclick="unmarkMissed()">苦手から解除</button>
     </div>
 
     <div id="status">データを読み込んでいます...</div>
@@ -299,6 +300,39 @@
             }
             // 自動で次へ進むなら nextCard() をここで呼ぶ
         }
+
+        //苦手から解除
+        function unmarkMissed() {
+            if (currentIndex >= currentList.length) return;
+
+            const currentItem = currentList[currentIndex];
+
+            // 苦手リストから削除
+            const beforeLength = missedList.length;
+            missedList = missedList.filter(w => w.English !== currentItem.English);
+
+            if (missedList.length === beforeLength) {
+                alert("この単語は苦手に登録されていません。");
+                return;
+            }
+
+            // localStorage更新
+            localStorage.setItem('myTangoMissed', JSON.stringify(missedList));
+            updateMissedCount();
+
+            alert(`「${currentItem.English}」を苦手から解除しました。`);
+
+            // 復習モード中なら currentList からも削除
+            currentList.splice(currentIndex, 1);
+
+            // インデックス調整
+            if (currentIndex >= currentList.length) {
+                currentIndex = currentList.length - 1;
+            }
+
+            renderCard();
+        }
+
 
         // 苦手リストのクリア
         function clearMissed() {
