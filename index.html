@@ -10,145 +10,185 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap" rel="stylesheet">    
-    <style>
-        :root { --orange:  #f26831; }
-
-        body {
-            font-family: "Noto Sans JP", sans-serif;
-            font-optical-sizing: auto;
-            font-weight: 400;
-            font-style: normal;
-            background-color: #f4f4f9;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-        }
-        ul,li{
-            padding: 0;
-        }
-        li{
-            list-style: none;
-        }
-
-        h1 { margin-top: 20px; color: #333; }
-
-        /* コントロールパネル */
-        .controls {
-            margin: 20px;
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        header{
-            background-color: var(--orange);
-            width: 100%;
-            text-align: center;
-            a{
-                color: #fff;
+        <style>
+            :root { 
+                --primary: #3b82f6;
+                --primary-hover: #2563eb;
+                --accent: #f97316;
+                --warning: #f59e0b;
+                --warning-hover: #d97706;
+                --danger: #ef4444;
+                --danger-hover: #dc2626;
+                --secondary: #6b7280; 
+                --secondary-hover: #4b5563;
+                --bg-color: #f8fafc;
+                --card-bg: #ffffff;
             }
-        }
-        button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background 0.3s;
-        }
-
-        .btn-main { background-color: #007bff; color: white; }
-        .btn-main:hover { background-color: #0056b3; }
         
-        .btn-warn { background-color: #ff9800; color: white; }
-        .btn-warn:hover { background-color: #e68900; }
-
-        .btn-danger { background-color: #dc3545; color: white; }
-        .btn-danger:hover { background-color: #a71d2a; }
-
-        /* ステータス表示 */
-        #status { margin-bottom: 10px; font-weight: bold; color: #555; }
-
-        /* カードエリア（左右分割） */
-        .card-container {
-            display: flex;
-            width: 90%;
-            max-width: 800px;
-            /* height: 300px; */
-            background: white;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            border-radius: 10px;
-            overflow: hidden;
-            margin-bottom: 20px;
-        }
-
-        /* 左側：問題（英語） */
-        .card-left {
-            flex: 1;
-            background-color: #e3f2fd;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.6rem;
-            font-weight: bold;
-            color: #333;
-            border-right: 1px solid #ddd;
-            padding:2em  20px;
-        }
-
-        /* 右側：答え（日本語） */
-        .card-right {
-            flex: 1;
-            background-color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.4rem;
-            color: #333;
-            cursor: pointer;
-            position: relative;
-            user-select: none; /* テキスト選択不可 */
-            transition: background 0.2s;
-						padding:2em  20px;
-
-        }
-
-        .card-right:hover {
-            background-color: #f9f9f9;
-        }
-
-        /* 答えを隠すためのマスク */
-        .card-right.hidden {
-            color: transparent;
-        }
-        .card-right.hidden::after {
-            content: "CLICK TO SHOW";
-            position: absolute;
-            color: #ccc;
-            font-size: 1.2rem;
-            font-weight: bold;
-        }
-
-        /* アクションボタンエリア */
-        .actions {
-            display: flex;
-            gap: 20px;
-        }
-        @media (max-width:800px) {
-            .actions {
-                flex-direction: column-reverse;
+            body {
+                font-family: "Noto Sans JP", sans-serif;
+                font-optical-sizing: auto;
+                font-weight: 400;
+                font-style: normal;
+                background-color: var(--bg-color);
+                color: #1e293b;
+                margin: 0;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                min-height: 100vh;
             }
-        }
-        .actions button {
-            width: 150px;
-            padding: 15px;
-            font-size: 18px;
-        }
-
-    </style>
+        
+            ul, li {
+                padding: 0;
+                margin: 0;
+            }
+            li {
+                list-style: none;
+            }
+        
+            h1 { 
+                margin-top: 24px; 
+                color: #0f172a; 
+                font-size: 1.8rem;
+            }
+        
+            .controls {
+                margin: 16px 20px;
+                display: flex;
+                gap: 10px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        
+            header {
+                background-color: var(--accent);
+                width: 100%;
+                text-align: center;
+                padding: 12px 0;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            }
+            header a {
+                color: #fff;
+                text-decoration: none;
+                font-weight: bold;
+            }
+            header a:hover {
+                text-decoration: underline;
+            }
+        
+            button {
+                padding: 10px 18px;
+                border: none;
+                border-radius: 8px; /* 角丸を少し柔らかく */
+                cursor: pointer;
+                font-size: 15px;
+                font-weight: 600;
+                transition: all 0.2s ease;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            }
+            button:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            }
+            button:active {
+                transform: translateY(0);
+            }
+        
+            /* ボタンカラーの定義 */
+            .btn-main { background-color: var(--primary); color: white; }
+            .btn-main:hover { background-color: var(--primary-hover); }
+            
+            .btn-warn { background-color: var(--warning); color: white; }
+            .btn-warn:hover { background-color: var(--warning-hover); }
+        
+            .btn-danger { background-color: var(--danger); color: white; }
+            .btn-danger:hover { background-color: var(--danger-hover); }
+        
+            .btn-sub { background-color: var(--secondary); color: white; }
+            .btn-sub:hover { background-color: var(--secondary-hover); }
+        
+            #status { 
+                margin-bottom: 12px; 
+                font-weight: 600; 
+                color: #64748b; 
+            }
+        
+            .card-container {
+                display: flex;
+                width: 90%;
+                max-width: 700px;
+                background: var(--card-bg);
+                box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05), 0 8px 10px -6px rgba(0,0,0,0.01);
+                border: 1px solid #e2e8f0;
+                border-radius: 12px;
+                overflow: hidden;
+                margin-bottom: 24px;
+            }
+        
+            .card-left {
+                flex: 1;
+                background-color: #eff6ff; /* 柔らかいブルーの背景 */
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.6rem;
+                font-weight: bold;
+                color: #1e3a8a;
+                border-right: 1px solid #e2e8f0;
+                padding: 2.5em 20px;
+            }
+        
+            .card-right {
+                flex: 1;
+                background-color: #fff;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.4rem;
+                color: #334155;
+                cursor: pointer;
+                position: relative;
+                user-select: none;
+                transition: background 0.2s;
+                padding: 2.5em 20px;
+            }
+        
+            .card-right:hover {
+                background-color: #f8fafc;
+            }
+        
+            .card-right.hidden {
+                color: transparent;
+            }
+            .card-right.hidden::after {
+                content: "CLICK TO SHOW";
+                position: absolute;
+                color: #94a3b8;
+                font-size: 1rem;
+                letter-spacing: 0.05em;
+                font-weight: bold;
+            }
+        
+            .actions {
+                display: flex;
+                gap: 16px;
+            }
+            @media (max-width: 600px) {
+                .actions {
+                    flex-direction: column-reverse;
+                    width: 90%;
+                }
+                .actions button {
+                    width: 100% !important;
+                }
+            }
+            .actions button {
+                width: 140px;
+                padding: 12px;
+                font-size: 16px;
+            }
+        </style>
 </head>
 <body>
     <header>
@@ -166,7 +206,7 @@
         <button class="btn-main" onclick="loadAndShuffle()">全単語シャッフル</button>
         <button class="btn-warn" onclick="startReviewMode()">苦手のみ復習 (<span id="missed-count">0</span>)</button>
         <button class="btn-danger" onclick="clearMissed()">苦手をリセット</button>
-        <button class="btn-main" onclick="unmarkMissed()">苦手から解除</button>
+        <button class="btn-sub" onclick="unmarkMissed()">苦手から解除</button>
     </div>
 
     <div id="status">データを読み込んでいます...</div>
@@ -190,21 +230,18 @@
         let missedList = [];
         let currentIndex = 0;
 
-        // 起動時に実行
         window.onload = async () => {
             loadMissedFromStorage();
             await loadJSON();
         };
 
-        // 1. JSONデータの読み込み
         async function loadJSON() {
             try {
                 // tango.json を読み込む
                 const response = await fetch('./assets/js/tango.json');
                 const data = await response.json();
-                allWords = data.Vocabulary; // JSONの構造に合わせる
+                allWords = data.Vocabulary; 
                 
-                // 最初は全単語をシャッフルして開始
                 loadAndShuffle();
             } catch (error) {
                 console.error('Error:', error);
@@ -212,7 +249,6 @@
             }
         }
 
-        // 2. LocalStorageから苦手リストを読み込む
         function loadMissedFromStorage() {
             const saved = localStorage.getItem('myTangoMissed');
             if (saved) {
@@ -221,17 +257,15 @@
             updateMissedCount();
         }
 
-        // 3. 全単語シャッフルモード開始
         function loadAndShuffle() {
             if (allWords.length === 0) return;
-            currentList = [...allWords]; // コピーを作成
+            currentList = [...allWords]
             shuffleArray(currentList);
             currentIndex = 0;
             document.getElementById('status').innerText = `全単語モード: ${currentList.length}語`;
             renderCard();
         }
 
-        // 4. 苦手復習モード開始
         function startReviewMode() {
             if (missedList.length === 0) {
                 alert("苦手な単語はまだありません！");
@@ -244,7 +278,6 @@
             renderCard();
         }
 
-        // カードの描画
         function renderCard() {
             if (currentList.length === 0 || currentIndex >= currentList.length) {
                 document.getElementById('question-text').innerText = "終了！";
@@ -257,16 +290,13 @@
             document.getElementById('question-text').innerText = item.English;
             document.getElementById('answer-text').innerText = item.Japanese;
             
-            // 答えを隠す
             document.getElementById('answer-text').classList.add('hidden');
         }
 
-        // 答えを表示
         function revealAnswer() {
             document.getElementById('answer-text').classList.remove('hidden');
         }
 
-        // 次のカードへ
         function nextCard() {
             if (currentIndex < currentList.length) {
                 currentIndex++;
@@ -274,7 +304,6 @@
             }
         }
 
-        // 次のカードへ
         function prevCard() {
             if (currentIndex < currentList.length) {
                 currentIndex--;
@@ -298,7 +327,6 @@
             } else {
                 alert("すでに登録済みです。");
             }
-            // 自動で次へ進むなら nextCard() をここで呼ぶ
         }
 
         //苦手から解除
@@ -307,7 +335,6 @@
 
             const currentItem = currentList[currentIndex];
 
-            // 苦手リストから削除
             const beforeLength = missedList.length;
             missedList = missedList.filter(w => w.English !== currentItem.English);
 
@@ -316,16 +343,13 @@
                 return;
             }
 
-            // localStorage更新
             localStorage.setItem('myTangoMissed', JSON.stringify(missedList));
             updateMissedCount();
 
             alert(`「${currentItem.English}」を苦手から解除しました。`);
 
-            // 復習モード中なら currentList からも削除
             currentList.splice(currentIndex, 1);
 
-            // インデックス調整
             if (currentIndex >= currentList.length) {
                 currentIndex = currentList.length - 1;
             }
@@ -333,8 +357,6 @@
             renderCard();
         }
 
-
-        // 苦手リストのクリア
         function clearMissed() {
             if(confirm("苦手リストを全て消去しますか？")) {
                 missedList = [];
@@ -348,7 +370,6 @@
             document.getElementById('missed-count').innerText = missedList.length;
         }
 
-        // シャッフル用関数（Fisher-Yates）
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
